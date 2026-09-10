@@ -24,7 +24,7 @@ in the middle of a word stays in the middle of that word in the output.
 
 - [`chord-sheet.js`](./chord-sheet.js) — the library. This is the only
   file you need to use ChordSheet.js in a project.
-- [`demo.html`](./demo.html) — a live, editable demo. Open it directly in
+- [`index.html`](./index.html) — a live, editable demo. Open it directly in
   a browser (no build step, no server needed) to try it out.
 
 ## Installation
