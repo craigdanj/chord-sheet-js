@@ -3,18 +3,18 @@
 A small, dependency-free JavaScript library that turns text like this:
 
 ```
-[G]Here is a [C]song, it's [Em]not very [D]long
-It [Cadd9]features [B]lyrics with [G]chords, [C]yes [G]chords.
+[G]This is a [C]song, you [Em]can sing [D]along
+It [Cadd9]has some [B]lyrics with [G]chords, [C]a few [G]chords.
 ```
 
 into a chord sheet where each chord sits directly above the exact lyric
 character it was written next to — as plain text or as HTML.
 
 ```
-G         C          Em       D
-Here is a song, it's not very long
-   Cadd9    B           G       C   G
-It features lyrics with chords, yes chords.
+G         C         Em       D
+This is a song, you can sing along
+   Cadd9    B           G       C     G
+It has some lyrics with chords, a few chords.
 ```
 
 Chords are placed by **column position**, not by word. A chord written
