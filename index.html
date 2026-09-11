@@ -1,99 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>ChordSheet.js Demo</title>
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    max-width: 780px;
-    margin: 40px auto;
-    padding: 0 20px;
-    color: #1a1a1a;
-    background: #fafafa;
-  }
-  h1 { font-size: 1.4rem; margin-bottom: 4px; }
-  p.subtitle { color: #666; margin-top: 0; }
-  textarea {
-    width: 100%;
-    height: 140px;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size: 14px;
-    padding: 12px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    resize: vertical;
-  }
-  .controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin: 12px 0 20px;
-  }
-  button {
-    padding: 8px 16px;
-    border: 1px solid #1a73e8;
-    background: #1a73e8;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  button.secondary {
-    background: white;
-    color: #1a73e8;
-  }
-  label.format-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    color: #444;
-  }
-  .output-wrap {
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: white;
-    padding: 20px;
-    overflow-x: auto;
-  }
-  .output-wrap pre {
-    margin: 0;
-    font-size: 15px;
-  }
-  .output-wrap.as-text {
-    white-space: pre;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size: 15px;
-  }
-  .output-wrap h1, .output-wrap h2, .output-wrap h3,
-  .output-wrap h4, .output-wrap h5, .output-wrap h6 {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    margin: 20px 0 8px;
-  }
-  .output-wrap h1:first-child { margin-top: 0; }
-  .output-wrap ul, .output-wrap ol {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    margin: 8px 0;
-    padding-left: 24px;
-  }
-  .output-wrap img {
-    max-width: 100%;
-    border-radius: 4px;
-    margin: 8px 0;
-  }
-  h2 { font-size: 1.05rem; margin-top: 32px; }
-</style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ChordSheet.js Demo</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        max-width: 780px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #1a1a1a;
+        background: #fafafa;
+      }
+      h1 {
+        font-size: 1.4rem;
+        margin-bottom: 4px;
+      }
+      p.subtitle {
+        color: #666;
+        margin-top: 0;
+      }
+      textarea {
+        width: 100%;
+        height: 140px;
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 14px;
+        padding: 12px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        resize: vertical;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 12px 0 20px;
+      }
+      button {
+        padding: 8px 16px;
+        border: 1px solid #1a73e8;
+        background: #1a73e8;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      button.secondary {
+        background: white;
+        color: #1a73e8;
+      }
+      label.format-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        color: #444;
+      }
+      .output-wrap {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background: white;
+        padding: 20px;
+        overflow-x: auto;
+      }
+      .output-wrap pre {
+        margin: 0;
+        font-size: 15px;
+      }
+      .output-wrap.as-text {
+        white-space: pre;
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: 15px;
+      }
+      .output-wrap h1,
+      .output-wrap h2,
+      .output-wrap h3,
+      .output-wrap h4,
+      .output-wrap h5,
+      .output-wrap h6 {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        margin: 20px 0 8px;
+      }
+      .output-wrap h1:first-child {
+        margin-top: 0;
+      }
+      .output-wrap ul,
+      .output-wrap ol {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        margin: 8px 0;
+        padding-left: 24px;
+      }
+      .output-wrap img {
+        max-width: 100%;
+        border-radius: 4px;
+        margin: 8px 0;
+      }
+      h2 {
+        font-size: 1.05rem;
+        margin-top: 32px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ChordSheet.js</h1>
+    <p class="subtitle">
+      Paste lyrics with inline <code>[Chord]</code> markers below. Chords are
+      placed above the exact character they were attached to. Headings, lists,
+      images, and <strong>bold</strong>/<em>italic</em> text are also supported
+      — on their own lines, never mixed into a chord+lyric line.
+    </p>
 
-  <h1>ChordSheet.js</h1>
-  <p class="subtitle">Paste lyrics with inline <code>[Chord]</code> markers below. Chords are placed above the exact character they were attached to. Headings, lists, images, and <strong>bold</strong>/<em>italic</em> text are also supported — on their own lines, never mixed into a chord+lyric line.</p>
+    <textarea id="input">
+# My Song
 
-  <textarea id="input"># My Song
+- Supports Markdown 
+- Headings 1 through 6 
+- **bold**, *italic*, lists and images
 
-![album cover](https://example.com/cover.jpg)
+#### Artist: Ben Hamer
+##### Album: Dawn to Dusk
+![album cover](https://picsum.photos/id/83/200/200)
+
+
 
 ## Verse 1
 
@@ -102,53 +136,50 @@ It [Cadd9]features [B]lyrics with [G]chords, [C]yes [G]chords.
 
 ## Chorus
 
-- Sing it **loud**
-- Sing it *proud*
+[Am]Second verse here, [F]nothing left [C]to prove
+[G]Just a plain old [D]chorus with a [Em]groove
+    </textarea>
 
-[Am]Second verse now, [F]nothing left [C]to prove
-[G]Just a plain old [D]chorus in the [Em]groove</textarea>
+    <div class="controls">
+      <button id="renderBtn">Render</button>
+      <label class="format-toggle">
+        <input type="checkbox" id="plainTextToggle" />
+        Plain text output (no HTML)
+      </label>
+    </div>
 
-  <div class="controls">
-    <button id="renderBtn">Render</button>
-    <label class="format-toggle">
-      <input type="checkbox" id="plainTextToggle">
-      Plain text output (no HTML)
-    </label>
-  </div>
+    <h2>Output</h2>
+    <div class="output-wrap" id="output"></div>
 
-  <h2>Output</h2>
-  <div class="output-wrap" id="output"></div>
+    <script src="chord-sheet.js"></script>
+    <script>
+      var input = document.getElementById("input");
+      var output = document.getElementById("output");
+      var renderBtn = document.getElementById("renderBtn");
+      var plainTextToggle = document.getElementById("plainTextToggle");
 
-  <script src="chord-sheet.js"></script>
-  <script>
-    var input = document.getElementById('input');
-    var output = document.getElementById('output');
-    var renderBtn = document.getElementById('renderBtn');
-    var plainTextToggle = document.getElementById('plainTextToggle');
+      function render() {
+        var asPlainText = plainTextToggle.checked;
+        var sheet = ChordSheet.parse(input.value);
 
-    function render() {
-      var asPlainText = plainTextToggle.checked;
-      var sheet = ChordSheet.parse(input.value);
-
-      if (asPlainText) {
-        // Plain text mode: show the raw text output escaped inside a <pre>,
-        // so the *displayed* content is literally what toText() returns —
-        // no chord/lyric span styling, just the aligned characters.
-        var text = ChordSheet.toText(sheet);
-        output.className = 'output-wrap as-text';
-        output.textContent = text;
-      } else {
-        output.className = 'output-wrap';
-        output.innerHTML = ChordSheet.toHTML(sheet);
+        if (asPlainText) {
+          // Plain text mode: show the raw text output escaped inside a <pre>,
+          // so the *displayed* content is literally what toText() returns —
+          // no chord/lyric span styling, just the aligned characters.
+          var text = ChordSheet.toText(sheet);
+          output.className = "output-wrap as-text";
+          output.textContent = text;
+        } else {
+          output.className = "output-wrap";
+          output.innerHTML = ChordSheet.toHTML(sheet);
+        }
       }
-    }
 
-    renderBtn.addEventListener('click', render);
-    plainTextToggle.addEventListener('change', render);
-    input.addEventListener('input', render);
+      renderBtn.addEventListener("click", render);
+      plainTextToggle.addEventListener("change", render);
+      input.addEventListener("input", render);
 
-    render();
-  </script>
-
-</body>
+      render();
+    </script>
+  </body>
 </html>
