@@ -4,119 +4,206 @@
     <meta charset="UTF-8" />
     <title>ChordSheet.js Demo</title>
     <style>
-      body {
-        font-family:
+      :root {
+        --accent: #1a73e8;
+        --ink: #1a1a1a;
+        --muted: #666;
+        --border: #ddd;
+        --border-strong: #ccc;
+        --bg: #fafafa;
+        --panel-bg: #ffffff;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        --sans:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        max-width: 780px;
-        margin: 40px auto;
-        padding: 0 20px;
-        color: #1a1a1a;
-        background: #fafafa;
       }
-      h1 {
-        font-size: 1.4rem;
-        margin-bottom: 4px;
-      }
-      p.subtitle {
-        color: #666;
-        margin-top: 0;
-      }
-      textarea {
-        width: 100%;
-        height: 140px;
-        font-family:
-          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-        font-size: 14px;
-        padding: 12px;
+
+      * {
         box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        resize: vertical;
       }
-      .controls {
+
+      body {
+        font-family: var(--sans);
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+        color: var(--ink);
+        background: var(--bg);
+      }
+
+      header {
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin: 20px 0 12px;
+      }
+
+      p.subtitle {
+        color: var(--muted);
+        margin: 0;
+        max-width: 68ch;
+        line-height: 1.5;
+      }
+
+      /* Toggle bar: sits above both columns since it's a shared render
+         setting, not something that belongs to either the input or the
+         output panel specifically. */
+      .toggle-bar {
         display: flex;
-        gap: 10px;
         align-items: center;
-        margin: 12px 0 20px;
+        margin-bottom: 16px;
       }
-      button {
-        padding: 8px 16px;
-        border: 1px solid #1a73e8;
-        background: #1a73e8;
-        color: white;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-      }
-      button.secondary {
-        background: white;
-        color: #1a73e8;
-      }
+
       label.format-toggle {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         font-size: 14px;
         color: #444;
+        cursor: pointer;
+        user-select: none;
       }
+
+      label.format-toggle input {
+        accent-color: var(--accent);
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
+
+      /* Two equal-width columns side by side; collapses to a single
+         column on narrow viewports (see media query below) so the
+         layout doesn't break on mobile or a narrow window. */
+      .workspace {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .panel {
+        display: flex;
+        flex-direction: column;
+        min-width: 0; /* allows child content (e.g. wide <pre> output) to
+                         scroll within the panel instead of overflowing it */
+      }
+
+      .panel-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      textarea {
+        flex: 1;
+        width: 100%;
+        min-height: 420px;
+        font-family: var(--mono);
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 16px;
+        border: 1px solid var(--border-strong);
+        border-radius: 8px;
+        resize: vertical;
+        background: var(--panel-bg);
+        color: var(--ink);
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+      }
+
       .output-wrap {
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        background: white;
+        flex: 1;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--panel-bg);
         padding: 20px;
-        overflow-x: auto;
+        overflow: auto;
+        min-height: 420px;
       }
+
       .output-wrap pre {
         margin: 0;
         font-size: 15px;
       }
+
       .output-wrap.as-text {
         white-space: pre;
-        font-family:
-          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-family: var(--mono);
         font-size: 15px;
       }
+
       .output-wrap h1,
       .output-wrap h2,
       .output-wrap h3,
       .output-wrap h4,
       .output-wrap h5,
       .output-wrap h6 {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--sans);
         margin: 20px 0 8px;
       }
+
       .output-wrap h1:first-child {
         margin-top: 0;
       }
+
       .output-wrap ul,
       .output-wrap ol {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--sans);
         margin: 8px 0;
         padding-left: 24px;
       }
+
       .output-wrap img {
         max-width: 100%;
         border-radius: 4px;
         margin: 8px 0;
       }
-      h2 {
-        font-size: 1.05rem;
-        margin-top: 32px;
+
+      /* Below this width, two columns get too cramped to be useful —
+         stack input above output instead, and drop the fixed panel
+         height so each one sizes to its own content. */
+      @media (max-width: 760px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        textarea,
+        .output-wrap {
+          min-height: 280px;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>ChordSheet.js</h1>
-    <p class="subtitle">
-      Paste lyrics with inline <code>[Chord]</code> markers below. Chords are
-      placed above the exact character they were attached to. Headings, lists,
-      images, and <strong>bold</strong>/<em>italic</em> text are also supported
-      — on their own lines, never mixed into a chord+lyric line.
-    </p>
+    <header>
+      <h1>ChordSheet.js</h1>
+      <p class="subtitle">
+        Paste lyrics with inline <code>[Chord]</code> markers below. Chords are
+        placed above the exact character they were attached to. Headings, lists,
+        images, and <strong>bold</strong>/<em>italic</em>
+        text are also supported — on their own lines, never mixed into a
+        chord+lyric line.
+      </p>
+    </header>
 
-    <textarea id="input">
+    <div class="toggle-bar">
+      <label class="format-toggle">
+        <input type="checkbox" id="plainTextToggle" />
+        Plain text output (no HTML)
+      </label>
+    </div>
+
+    <div class="workspace">
+      <div class="panel">
+        <div class="panel-label">Input</div>
+        <textarea id="input">
 # My Song
 
 - Supports Markdown 
@@ -125,7 +212,7 @@
 
 #### Artist: Ben Hamer
 ##### Album: Dawn to Dusk
-![album cover](https://picsum.photos/id/83/200/200)
+![album cover](https://picsum.photos/id/83/120/120)
 
 
 
@@ -138,24 +225,20 @@ It [Cadd9]features [B]lyrics with [G]chords, [C]yes [G]chords.
 
 [Am]Second verse here, [F]nothing left [C]to prove
 [G]Just a plain old [D]chorus with a [Em]groove
-    </textarea>
+    </textarea
+        >
+      </div>
 
-    <div class="controls">
-      <button id="renderBtn">Render</button>
-      <label class="format-toggle">
-        <input type="checkbox" id="plainTextToggle" />
-        Plain text output (no HTML)
-      </label>
+      <div class="panel">
+        <div class="panel-label">Output</div>
+        <div class="output-wrap" id="output"></div>
+      </div>
     </div>
-
-    <h2>Output</h2>
-    <div class="output-wrap" id="output"></div>
 
     <script src="chord-sheet.js"></script>
     <script>
       var input = document.getElementById("input");
       var output = document.getElementById("output");
-      var renderBtn = document.getElementById("renderBtn");
       var plainTextToggle = document.getElementById("plainTextToggle");
 
       function render() {
@@ -175,7 +258,6 @@ It [Cadd9]features [B]lyrics with [G]chords, [C]yes [G]chords.
         }
       }
 
-      renderBtn.addEventListener("click", render);
       plainTextToggle.addEventListener("change", render);
       input.addEventListener("input", render);
 
