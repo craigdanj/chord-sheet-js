@@ -1,4 +1,6 @@
-# ChordSheet.js   ![ChordShape demo](https://img.shields.io/badge/dependencies-none-brightgreen) ![ChordShape demo](https://img.shields.io/badge/JavaScript-vanilla-yellow)
+# ChordSheet.js
+
+![ChordShape demo](https://img.shields.io/badge/dependencies-none-brightgreen) ![ChordShape demo](https://img.shields.io/badge/JavaScript-vanilla-yellow)
 
 A small, dependency-free JavaScript library that turns text like this:
 
