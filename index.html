@@ -3,746 +3,149 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="An interactive demo for ChordSheet.js — turn inline chord notation into polished, aligned song sheets."
-    />
+    <meta name="description" content="An interactive demo for ChordSheet.js — turn inline chord notation into polished, aligned song sheets." />
     <title>ChordSheet.js — Interactive demo</title>
     <style>
       :root {
-        --ink: #18241f;
-        --muted: #66736c;
-        --paper: #fffdf8;
-        --canvas: #f2f0e9;
-        --line: #dadbd3;
-        --brand: #e45c3a;
-        --brand-dark: #ba3f24;
-        --mint: #dbece2;
-        --mint-strong: #b8d8c5;
-        --navy: #173e35;
-        --shadow: 0 18px 50px rgba(25, 43, 36, 0.1);
+        --ink: #18241f; --muted: #66736c; --paper: #fffdf8; --canvas: #f2f0e9;
+        --line: #dadbd3; --brand: #e45c3a; --brand-dark: #ba3f24; --mint: #dbece2;
+        --mint-strong: #b8d8c5; --navy: #173e35; --shadow: 0 18px 50px rgba(25, 43, 36, 0.1);
         --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-        --sans:
-          Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
+        --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         --serif: Georgia, "Times New Roman", serif;
       }
-      * {
-        box-sizing: border-box;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
       body {
-        margin: 0;
-        color: var(--ink);
-        font-family: var(--sans);
-        min-height: 100vh;
-        background:
-          radial-gradient(
-            circle at 8% 5%,
-            rgba(228, 92, 58, 0.1),
-            transparent 26rem
-          ),
-          radial-gradient(
-            circle at 92% 18%,
-            rgba(80, 137, 105, 0.12),
-            transparent 30rem
-          ),
-          var(--canvas);
-      }
-      button,
-      textarea,
-      select {
-        font: inherit;
-      }
-      button,
-      select {
-        cursor: pointer;
-      }
-      .site-header {
-        width: min(1440px, calc(100% - 40px));
-        margin: 0 auto;
-        min-height: 72px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 24px;
-        border-bottom: 1px solid rgba(23, 62, 53, 0.12);
-      }
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 11px;
-        color: var(--ink);
-        font-weight: 780;
-        letter-spacing: -0.025em;
-      }
-      .brand-mark {
-        width: 34px;
-        height: 34px;
-        display: grid;
-        place-items: center;
-        border-radius: 10px;
-        background: var(--navy);
-        color: #fff;
-        box-shadow: 0 7px 18px rgba(23, 62, 53, 0.18);
-      }
-      .brand-mark svg {
-        width: 19px;
-        height: 19px;
-      }
-      .header-meta {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--muted);
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-      }
-      .status-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #55a66f;
-        box-shadow: 0 0 0 4px rgba(85, 166, 111, 0.12);
-      }
-      main {
-        width: min(1440px, calc(100% - 40px));
-        margin: 0 auto;
-        padding: 56px 0 44px;
-      }
-      .hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
-        align-items: end;
-        gap: clamp(28px, 7vw, 100px);
-        margin-bottom: 42px;
-      }
-      .eyebrow {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--brand-dark);
-        font-size: 0.76rem;
-        font-weight: 800;
-        letter-spacing: 0.13em;
-        text-transform: uppercase;
-        margin-bottom: 15px;
-      }
-      .eyebrow::before {
-        content: "";
-        width: 25px;
-        height: 2px;
-        background: var(--brand);
-      }
-      h1 {
-        max-width: 780px;
-        margin: 0;
-        font-family: var(--serif);
-        font-size: clamp(3rem, 6.1vw, 6.4rem);
-        font-weight: 500;
-        letter-spacing: -0.055em;
-        line-height: 0.92;
-      }
-      h1 em {
-        color: var(--brand);
-        font-weight: inherit;
-      }
-      .hero-copy {
-        max-width: 520px;
-        margin: 0 0 4px;
-        color: var(--muted);
-        font-size: clamp(1rem, 1.4vw, 1.18rem);
-        line-height: 1.65;
-      }
-      .hero-copy code,
-      .syntax-hint code {
-        padding: 0.16em 0.42em;
-        border-radius: 5px;
-        color: var(--navy);
-        background: var(--mint);
-        font-family: var(--mono);
-        font-size: 0.88em;
-      }
-      .workbench {
-        overflow: hidden;
-        border: 1px solid rgba(23, 62, 53, 0.14);
-        border-radius: 20px;
-        background: rgba(255, 253, 248, 0.82);
-        box-shadow: var(--shadow);
-        backdrop-filter: blur(12px);
-      }
-      .workbench-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-        min-height: 64px;
-        padding: 12px 16px 12px 22px;
-        border-bottom: 1px solid var(--line);
-      }
-      .document-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 0;
-        font-size: 0.9rem;
-        font-weight: 750;
-      }
-      .document-title svg {
-        flex: 0 0 auto;
-        color: var(--brand);
-      }
-      .saved-state {
-        color: var(--muted);
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
-      .toolbar {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      select,
-      .button {
-        min-height: 36px;
-        border: 1px solid var(--line);
-        border-radius: 9px;
-        background: #fff;
-        color: var(--ink);
-        font-size: 0.78rem;
-        font-weight: 700;
-        transition:
-          border-color 160ms ease,
-          transform 160ms ease,
-          background 160ms ease;
-      }
-      select {
-        padding: 0 32px 0 12px;
-      }
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        padding: 0 12px;
-      }
-      .button:hover,
-      select:hover {
-        border-color: #aeb5ad;
-      }
-      .button:active {
-        transform: translateY(1px);
-      }
-      .button svg {
-        width: 15px;
-        height: 15px;
-      }
-      .button-primary {
-        border-color: var(--navy);
-        background: var(--navy);
-        color: #fff;
-      }
-      .button-primary:hover {
-        border-color: #235c4f;
-        background: #235c4f;
-      }
-      .workspace {
-        display: grid;
-        grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-        min-height: 610px;
-      }
-      .panel {
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-      }
-      .editor-panel {
-        border-right: 1px solid var(--line);
-        background: #f8f6f0;
-      }
-      .preview-panel {
-        background: var(--paper);
-      }
-      .panel-header {
-        min-height: 49px;
-        padding: 0 18px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        border-bottom: 1px solid var(--line);
-      }
-      .panel-label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-      }
-      .panel-label::before {
-        content: "";
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--brand);
-      }
-      .line-count {
-        color: #89928c;
-        font-size: 0.73rem;
-      }
-      .mode-switch {
-        display: inline-flex;
-        gap: 3px;
-        padding: 3px;
-        border: 1px solid var(--line);
-        border-radius: 9px;
-        background: #f1efe8;
-      }
-      .mode-button {
-        border: 0;
-        border-radius: 6px;
-        padding: 5px 10px;
-        color: var(--muted);
-        background: transparent;
-        font-size: 0.72rem;
-        font-weight: 750;
-      }
-      .mode-button[aria-selected="true"] {
-        color: var(--ink);
-        background: #fff;
-        box-shadow: 0 1px 4px rgba(24, 36, 31, 0.1);
-      }
-      textarea {
-        flex: 1;
-        width: 100%;
-        min-height: 560px;
-        padding: 26px 28px 40px;
-        resize: none;
-        border: 0;
-        outline: 0;
-        color: #314139;
-        background: transparent;
-        font-family: var(--mono);
-        font-size: 0.9rem;
-        line-height: 1.75;
-        tab-size: 2;
-      }
-      textarea::selection {
-        color: var(--ink);
-        background: var(--mint-strong);
-      }
-      .output-wrap {
-        flex: 1;
-        min-height: 560px;
-        overflow: auto;
-        padding: clamp(30px, 5vw, 62px);
-      }
-      .output-wrap.as-text {
-        white-space: pre;
-        color: #38483f;
-        font-family: var(--mono);
-        font-size: 0.9rem;
-        line-height: 1.7;
-      }
-      .output-wrap h1,
-      .output-wrap h2,
-      .output-wrap h3,
-      .output-wrap h4,
-      .output-wrap h5,
-      .output-wrap h6 {
-        font-family: var(--sans);
-        letter-spacing: -0.025em;
-      }
-      .output-wrap h1 {
-        max-width: none;
-        margin: 0 0 8px;
-        color: var(--ink);
-        font-family: var(--serif);
-        font-size: clamp(2rem, 3vw, 3rem);
-        line-height: 1.05;
-      }
-      .output-wrap h2 {
-        margin: 38px 0 14px;
-        color: var(--brand-dark);
-        font-size: 0.78rem;
-        font-weight: 850;
-        letter-spacing: 0.13em;
-        text-transform: uppercase;
-      }
-      .output-wrap h3 {
-        margin: 4px 0 7px;
-        color: var(--muted);
-        font-size: 0.95rem;
-      }
-      .output-wrap h4,
-      .output-wrap h5 {
-        margin: 6px 0;
-        color: var(--muted);
-        font-size: 0.8rem;
-      }
-      .output-wrap ul,
-      .output-wrap ol {
-        margin: 18px 0;
-        padding: 15px 18px 15px 38px;
-        border-radius: 10px;
-        color: var(--muted);
-        background: #f3f0e8;
-        line-height: 1.7;
-      }
-      .output-wrap img {
-        width: 100%;
-        max-width: 150px;
-        aspect-ratio: 1;
-        object-fit: cover;
-        float: right;
-        margin: -60px 0 18px 24px;
-        border-radius: 14px;
-        filter: sepia(0.08) saturate(0.9);
-        box-shadow: 0 12px 25px rgba(24, 36, 31, 0.12);
-      }
-      .chord-sheet {
-        margin: 0;
-        overflow: visible;
-        white-space: pre;
-        color: #35453d;
-        font-family: var(--mono);
-        font-size: clamp(0.78rem, 1.18vw, 0.98rem);
-        line-height: 1.62;
-      }
-      .chord-sheet-chords {
-        color: var(--brand);
-        font-weight: 800;
-      }
-      .chord-name {
-        position: relative;
-      }
-      .chord-sheet-lyrics {
-        color: #35453d;
-      }
-      .workbench-footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 12px 20px;
-        border-top: 1px solid var(--line);
-        color: var(--muted);
-        background: #f8f6f0;
-        font-size: 0.72rem;
-      }
-      .render-state {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .render-state .status-dot {
-        width: 6px;
-        height: 6px;
-        box-shadow: none;
-      }
-      .syntax-hint {
-        margin: 0;
-        text-align: right;
-      }
-      .feature-strip {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        border-top: 1px solid rgba(23, 62, 53, 0.14);
-        margin-top: 58px;
-      }
-      .feature {
-        padding: 24px 24px 0 0;
-      }
-      .feature + .feature {
-        padding-left: 24px;
-        border-left: 1px solid rgba(23, 62, 53, 0.14);
-      }
-      .feature-number {
-        display: block;
-        margin-bottom: 16px;
-        color: var(--brand);
-        font-family: var(--mono);
-        font-size: 0.7rem;
-      }
-      .feature strong {
-        display: block;
-        margin-bottom: 7px;
-        font-family: var(--serif);
-        font-size: 1.15rem;
-        font-weight: 600;
-      }
-      .feature p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.82rem;
-        line-height: 1.55;
-      }
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-      :focus-visible {
-        outline: 3px solid rgba(228, 92, 58, 0.28);
-        outline-offset: 2px;
-      }
+        margin: 0; color: var(--ink); font-family: var(--sans); min-height: 100vh;
+        background: radial-gradient(circle at 8% 5%, rgba(228, 92, 58, 0.1), transparent 26rem),
+          radial-gradient(circle at 92% 18%, rgba(80, 137, 105, 0.12), transparent 30rem), var(--canvas);
+      }
+      button, textarea, select { font: inherit; }
+      button, select { cursor: pointer; }
+      .site-header { width: min(1440px, calc(100% - 40px)); margin: 0 auto; min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid rgba(23, 62, 53, 0.12); }
+      .brand { display: inline-flex; align-items: center; gap: 11px; color: var(--ink); font-weight: 780; letter-spacing: -0.025em; }
+      .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--navy); color: #fff; box-shadow: 0 7px 18px rgba(23, 62, 53, 0.18); }
+      .brand-mark svg { width: 19px; height: 19px; }
+      .header-meta { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+      .header-actions { display: flex; align-items: center; gap: 18px; }
+      .github-link { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 13px; border: 1px solid rgba(23, 62, 53, 0.18); border-radius: 9px; color: var(--ink); background: rgba(255, 255, 255, 0.55); font-size: 0.78rem; font-weight: 750; text-decoration: none; transition: color 160ms ease, border-color 160ms ease, background 160ms ease, transform 160ms ease; }
+      .github-link:hover { color: #fff; border-color: var(--navy); background: var(--navy); transform: translateY(-1px); }
+      .github-link svg { width: 17px; height: 17px; flex: 0 0 auto; }
+      .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #55a66f; box-shadow: 0 0 0 4px rgba(85, 166, 111, 0.12); }
+      main { width: min(1440px, calc(100% - 40px)); margin: 0 auto; padding: 56px 0 44px; }
+      .hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr); align-items: end; gap: clamp(28px, 7vw, 100px); margin-bottom: 42px; }
+      .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--brand-dark); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 15px; }
+      .eyebrow::before { content: ""; width: 25px; height: 2px; background: var(--brand); }
+      h1 { max-width: 780px; margin: 0; font-family: var(--serif); font-size: clamp(3rem, 6.1vw, 6.4rem); font-weight: 500; letter-spacing: -0.055em; line-height: 0.92; }
+      h1 em { color: var(--brand); font-weight: inherit; }
+      .hero-copy { max-width: 520px; margin: 0 0 4px; color: var(--muted); font-size: clamp(1rem, 1.4vw, 1.18rem); line-height: 1.65; }
+      .hero-copy code, .syntax-hint code { padding: 0.16em 0.42em; border-radius: 5px; color: var(--navy); background: var(--mint); font-family: var(--mono); font-size: 0.88em; }
+      .workbench { overflow: hidden; border: 1px solid rgba(23, 62, 53, 0.14); border-radius: 20px; background: rgba(255, 253, 248, 0.82); box-shadow: var(--shadow); backdrop-filter: blur(12px); }
+      .workbench-bar { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 64px; padding: 12px 16px 12px 22px; border-bottom: 1px solid var(--line); }
+      .document-title { display: flex; align-items: center; gap: 10px; min-width: 0; font-size: 0.9rem; font-weight: 750; }
+      .document-title svg { flex: 0 0 auto; color: var(--brand); }
+      .saved-state { color: var(--muted); font-size: 0.75rem; font-weight: 500; }
+      .toolbar { display: flex; align-items: center; gap: 8px; }
+      select, .button { min-height: 36px; border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink); font-size: 0.78rem; font-weight: 700; transition: border-color 160ms ease, transform 160ms ease, background 160ms ease; }
+      select { padding: 0 32px 0 12px; }
+      .button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 12px; }
+      .button:hover, select:hover { border-color: #aeb5ad; }
+      .button:active { transform: translateY(1px); }
+      .button svg { width: 15px; height: 15px; }
+      .button-primary { border-color: var(--navy); background: var(--navy); color: #fff; }
+      .button-primary:hover { border-color: #235c4f; background: #235c4f; }
+      .workspace { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); min-height: 610px; }
+      .panel { min-width: 0; display: flex; flex-direction: column; }
+      .editor-panel { border-right: 1px solid var(--line); background: #f8f6f0; }
+      .preview-panel { background: var(--paper); }
+      .panel-header { min-height: 49px; padding: 0 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); }
+      .panel-label { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+      .panel-label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+      .line-count { color: #89928c; font-size: 0.73rem; }
+      .mode-switch { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: #f1efe8; }
+      .mode-button { border: 0; border-radius: 6px; padding: 5px 10px; color: var(--muted); background: transparent; font-size: 0.72rem; font-weight: 750; }
+      .mode-button[aria-selected="true"] { color: var(--ink); background: #fff; box-shadow: 0 1px 4px rgba(24, 36, 31, 0.1); }
+      textarea { flex: 1; width: 100%; min-height: 560px; padding: 26px 28px 40px; resize: none; border: 0; outline: 0; color: #314139; background: transparent; font-family: var(--mono); font-size: 0.9rem; line-height: 1.75; tab-size: 2; }
+      textarea::selection { color: var(--ink); background: var(--mint-strong); }
+      .output-wrap { flex: 1; min-height: 560px; overflow: auto; padding: clamp(30px, 5vw, 62px); }
+      .output-wrap.as-text { white-space: pre; color: #38483f; font-family: var(--mono); font-size: 0.9rem; line-height: 1.7; }
+      .output-wrap h1, .output-wrap h2, .output-wrap h3, .output-wrap h4, .output-wrap h5, .output-wrap h6 { font-family: var(--sans); letter-spacing: -0.025em; }
+      .output-wrap h1 { max-width: none; margin: 0 0 8px; color: var(--ink); font-family: var(--serif); font-size: clamp(2rem, 3vw, 3rem); line-height: 1.05; }
+      .output-wrap h2 { margin: 38px 0 14px; color: var(--brand-dark); font-size: 0.78rem; font-weight: 850; letter-spacing: 0.13em; text-transform: uppercase; }
+      .output-wrap h3 { margin: 4px 0 7px; color: var(--muted); font-size: 0.95rem; }
+      .output-wrap h4, .output-wrap h5 { margin: 6px 0; color: var(--muted); font-size: 0.8rem; }
+      .output-wrap ul, .output-wrap ol { margin: 18px 0; padding: 15px 18px 15px 38px; border-radius: 10px; color: var(--muted); background: #f3f0e8; line-height: 1.7; }
+      .output-wrap img { width: 100%; max-width: 150px; aspect-ratio: 1; object-fit: cover; float: right; margin: -60px 0 18px 24px; border-radius: 14px; filter: sepia(0.08) saturate(0.9); box-shadow: 0 12px 25px rgba(24, 36, 31, 0.12); }
+      .chord-sheet { margin: 0; overflow: visible; white-space: pre; color: #35453d; font-family: var(--mono); font-size: clamp(0.78rem, 1.18vw, 0.98rem); line-height: 1.62; }
+      .chord-sheet-chords { color: var(--brand); font-weight: 800; }
+      .chord-name { position: relative; }
+      .chord-sheet-lyrics { color: #35453d; }
+      .workbench-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px 20px; border-top: 1px solid var(--line); color: var(--muted); background: #f8f6f0; font-size: 0.72rem; }
+      .render-state { display: flex; align-items: center; gap: 8px; }
+      .render-state .status-dot { width: 6px; height: 6px; box-shadow: none; }
+      .syntax-hint { margin: 0; text-align: right; }
+      .feature-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(23, 62, 53, 0.14); margin-top: 58px; }
+      .feature { padding: 24px 24px 0 0; }
+      .feature + .feature { padding-left: 24px; border-left: 1px solid rgba(23, 62, 53, 0.14); }
+      .feature-number { display: block; margin-bottom: 16px; color: var(--brand); font-family: var(--mono); font-size: 0.7rem; }
+      .feature strong { display: block; margin-bottom: 7px; font-family: var(--serif); font-size: 1.15rem; font-weight: 600; }
+      .feature p { margin: 0; color: var(--muted); font-size: 0.82rem; line-height: 1.55; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+      :focus-visible { outline: 3px solid rgba(228, 92, 58, 0.28); outline-offset: 2px; }
       @media (max-width: 920px) {
-        .hero {
-          grid-template-columns: 1fr;
-          gap: 22px;
-        }
-        .hero-copy {
-          max-width: 700px;
-        }
-        .workspace {
-          grid-template-columns: 1fr;
-        }
-        .editor-panel {
-          border-right: 0;
-          border-bottom: 1px solid var(--line);
-        }
-        textarea,
-        .output-wrap {
-          min-height: 430px;
-        }
-        .feature-strip {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .feature:nth-child(3) {
-          border-left: 0;
-        }
+        .hero { grid-template-columns: 1fr; gap: 22px; } .hero-copy { max-width: 700px; }
+        .workspace { grid-template-columns: 1fr; } .editor-panel { border-right: 0; border-bottom: 1px solid var(--line); }
+        textarea, .output-wrap { min-height: 430px; } .feature-strip { grid-template-columns: repeat(2, 1fr); }
+        .feature:nth-child(3) { border-left: 0; }
       }
       @media (max-width: 640px) {
-        .site-header,
-        main {
-          width: min(100% - 24px, 1440px);
-        }
-        .header-meta,
-        .saved-state,
-        .syntax-hint {
-          display: none;
-        }
-        main {
-          padding-top: 38px;
-        }
-        .hero {
-          margin-bottom: 28px;
-        }
-        .workbench-bar {
-          align-items: flex-start;
-          flex-direction: column;
-          padding: 15px;
-        }
-        .toolbar {
-          width: 100%;
-        }
-        select {
-          min-width: 0;
-          flex: 1;
-        }
-        .workspace {
-          min-height: 0;
-        }
-        textarea {
-          min-height: 390px;
-          padding: 22px 18px;
-          font-size: 0.8rem;
-        }
-        .output-wrap {
-          min-height: 430px;
-          padding: 30px 20px;
-        }
-        .output-wrap img {
-          float: none;
-          margin: 10px 0 20px;
-        }
-        .feature-strip {
-          grid-template-columns: 1fr;
-        }
-        .feature,
-        .feature + .feature {
-          padding: 22px 0;
-          border-left: 0;
-          border-bottom: 1px solid rgba(23, 62, 53, 0.14);
-        }
+        .site-header, main { width: min(100% - 24px, 1440px); } .header-meta, .saved-state, .syntax-hint { display: none; }
+        .header-actions { gap: 0; } .github-link { padding: 0 10px; } .github-link span { display: none; }
+        main { padding-top: 38px; } .hero { margin-bottom: 28px; } .workbench-bar { align-items: flex-start; flex-direction: column; padding: 15px; }
+        .toolbar { width: 100%; } select { min-width: 0; flex: 1; } .workspace { min-height: 0; }
+        textarea { min-height: 390px; padding: 22px 18px; font-size: 0.8rem; } .output-wrap { min-height: 430px; padding: 30px 20px; }
+        .output-wrap img { float: none; margin: 10px 0 20px; } .feature-strip { grid-template-columns: 1fr; }
+        .feature, .feature + .feature { padding: 22px 0; border-left: 0; border-bottom: 1px solid rgba(23, 62, 53, 0.14); }
       }
     </style>
   </head>
   <body>
     <header class="site-header">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true"
-          ><svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          >
-            <path d="M9 18V5l10-2v13" />
-            <circle cx="6" cy="18" r="3" />
-            <circle cx="16" cy="16" r="3" /></svg></span
-        ><span>ChordSheet.js</span>
-      </div>
-      <div class="header-meta">
-        <span class="status-dot"></span>Zero dependencies · Browser ready
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l10-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="16" cy="16" r="3" /></svg></span><span>ChordSheet.js</span></div>
+      <div class="header-actions">
+        <div class="header-meta"><span class="status-dot"></span>Zero dependencies · Browser ready</div>
+        <a class="github-link" href="https://github.com/craigdanj/chord-sheet-js" target="_blank" rel="noopener noreferrer" aria-label="View ChordSheet.js on GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .7a11.5 11.5 0 0 0-3.64 22.4c.58.1.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.52-1.34-1.29-1.7-1.29-1.7-1.05-.73.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.8 2.72 1.28 3.38.98.1-.76.4-1.28.74-1.57-2.57-.3-5.27-1.3-5.27-5.74 0-1.27.45-2.31 1.19-3.12-.12-.3-.52-1.48.11-3.08 0 0 .97-.31 3.17 1.19A10.9 10.9 0 0 1 12 6c.98 0 1.95.13 2.86.39 2.2-1.5 3.17-1.19 3.17-1.19.63 1.6.23 2.78.11 3.08.74.81 1.19 1.85 1.19 3.12 0 4.46-2.71 5.44-5.29 5.73.42.36.79 1.07.79 2.16v3.25c0 .31.21.67.8.55A11.5 11.5 0 0 0 12 .7Z"/></svg>
+          <span>View on GitHub</span>
+        </a>
       </div>
     </header>
     <main>
       <section class="hero" aria-labelledby="page-title">
-        <div>
-          <div class="eyebrow">Interactive playground</div>
-          <h1 id="page-title">
-            Write the song.<br /><em>Keep the rhythm.</em>
-          </h1>
-        </div>
-        <p class="hero-copy">
-          Turn familiar inline notation like <code>[G]hello</code> into a clean,
-          perfectly aligned chord sheet. Edit the source and watch it render
-          live.<br />
-          Headings, lists, images, and bold/italic text are also supported via
-          markdown — on their own lines, never mixed into a chord+lyric line.
-        </p>
-        <p class="hero-copy"></p>
+        <div><div class="eyebrow">Interactive playground</div><h1 id="page-title">Write the song.<br /><em>Keep the rhythm.</em></h1></div>
+        <p class="hero-copy">Turn familiar inline notation like <code>[G]hello</code> into a clean, perfectly aligned chord sheet. Edit the source and watch it render live.</p>
       </section>
       <section class="workbench" aria-label="ChordSheet interactive demo">
         <div class="workbench-bar">
-          <div class="document-title">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              aria-hidden="true"
-            >
-              <path
-                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-              />
-              <path d="M14 2v6h6" /></svg
-            ><span>Untitled song</span
-            ><span class="saved-state">· Live preview</span>
-          </div>
+          <div class="document-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span>Untitled song</span><span class="saved-state">· Live preview</span></div>
           <div class="toolbar">
             <label class="sr-only" for="sampleSelect">Load a demo song</label>
-            <select id="sampleSelect" aria-label="Load a demo song">
-              <option value="daybreak">Daybreak (full demo)</option>
-              <option value="simple">Simple progression</option>
-              <option value="barre">Dense chord changes</option>
-            </select>
-            <button class="button button-primary" id="copyButton" type="button">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                aria-hidden="true"
-              >
-                <rect x="9" y="9" width="11" height="11" rx="2" />
-                <path
-                  d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                /></svg
-              ><span id="copyLabel">Copy output</span>
-            </button>
+            <select id="sampleSelect" aria-label="Load a demo song"><option value="daybreak">Daybreak (full demo)</option><option value="simple">Simple progression</option><option value="barre">Dense chord changes</option></select>
+            <button class="button button-primary" id="copyButton" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span id="copyLabel">Copy output</span></button>
           </div>
         </div>
         <div class="workspace">
-          <section class="panel editor-panel" aria-labelledby="source-label">
-            <div class="panel-header">
-              <h2 class="panel-label" id="source-label">Source</h2>
-              <span class="line-count" id="lineCount">0 lines</span>
-            </div>
-            <textarea
-              id="input"
-              spellcheck="false"
-              aria-label="Chord sheet source"
-            ></textarea>
-          </section>
-          <section class="panel preview-panel" aria-labelledby="preview-label">
-            <div class="panel-header">
-              <h2 class="panel-label" id="preview-label">Preview</h2>
-              <div
-                class="mode-switch"
-                role="tablist"
-                aria-label="Output format"
-              >
-                <button
-                  class="mode-button"
-                  id="htmlMode"
-                  type="button"
-                  role="tab"
-                  aria-selected="true"
-                >
-                  Styled</button
-                ><button
-                  class="mode-button"
-                  id="textMode"
-                  type="button"
-                  role="tab"
-                  aria-selected="false"
-                >
-                  Plain text
-                </button>
-              </div>
-            </div>
-            <div class="output-wrap" id="output" aria-live="polite"></div>
-          </section>
+          <section class="panel editor-panel" aria-labelledby="source-label"><div class="panel-header"><h2 class="panel-label" id="source-label">Source</h2><span class="line-count" id="lineCount">0 lines</span></div><textarea id="input" spellcheck="false" aria-label="Chord sheet source"></textarea></section>
+          <section class="panel preview-panel" aria-labelledby="preview-label"><div class="panel-header"><h2 class="panel-label" id="preview-label">Preview</h2><div class="mode-switch" role="tablist" aria-label="Output format"><button class="mode-button" id="htmlMode" type="button" role="tab" aria-selected="true">Styled</button><button class="mode-button" id="textMode" type="button" role="tab" aria-selected="false">Plain text</button></div></div><div class="output-wrap" id="output" aria-live="polite"></div></section>
         </div>
-        <div class="workbench-footer">
-          <div class="render-state">
-            <span class="status-dot"></span
-            ><span id="renderStatus">Rendered instantly</span>
-          </div>
-          <p class="syntax-hint">
-            Try <code>[Am]words</code>, <code>## Verse</code>, or
-            <code>**bold**</code>
-          </p>
-        </div>
+        <div class="workbench-footer"><div class="render-state"><span class="status-dot"></span><span id="renderStatus">Rendered instantly</span></div><p class="syntax-hint">Try <code>[Am]words</code>, <code>## Verse</code>, or <code>**bold**</code></p></div>
       </section>
       <section class="feature-strip" aria-label="Library features">
-        <article class="feature">
-          <span class="feature-number">01</span
-          ><strong>Precise alignment</strong>
-          <p>
-            Chords stay anchored to the exact lyric character where you placed
-            them.
-          </p>
-        </article>
-        <article class="feature">
-          <span class="feature-number">02</span><strong>Markdown aware</strong>
-          <p>
-            Use headings, lists, emphasis, and images alongside your notation.
-          </p>
-        </article>
-        <article class="feature">
-          <span class="feature-number">03</span><strong>Two outputs</strong>
-          <p>
-            Render polished HTML for the browser or portable plain text for
-            anywhere else.
-          </p>
-        </article>
-        <article class="feature">
-          <span class="feature-number">04</span><strong>Small by design</strong>
-          <p>
-            No framework and no runtime dependencies—just include the script and
-            play.
-          </p>
-        </article>
+        <article class="feature"><span class="feature-number">01</span><strong>Precise alignment</strong><p>Chords stay anchored to the exact lyric character where you placed them.</p></article>
+        <article class="feature"><span class="feature-number">02</span><strong>Markdown aware</strong><p>Use headings, lists, emphasis, and images alongside your notation.</p></article>
+        <article class="feature"><span class="feature-number">03</span><strong>Two outputs</strong><p>Render polished HTML for the browser or portable plain text for anywhere else.</p></article>
+        <article class="feature"><span class="feature-number">04</span><strong>Small by design</strong><p>No framework and no runtime dependencies—just include the script and play.</p></article>
       </section>
     </main>
     <script src="chord-sheet.js"></script>
@@ -791,7 +194,7 @@
 [Bbmaj7]Long names [F/A]still have [Gsus4]room to [G]show
 
 - Adjacent chords never overlap
-- A one-space minimum keeps them readable`,
+- A one-space minimum keeps them readable`
       };
       const input = document.getElementById("input");
       const output = document.getElementById("output");
@@ -803,52 +206,25 @@
       const copyLabel = document.getElementById("copyLabel");
       const renderStatus = document.getElementById("renderStatus");
       let currentMode = "html";
-      function setMode(mode) {
-        currentMode = mode;
-        htmlMode.setAttribute("aria-selected", String(mode === "html"));
-        textMode.setAttribute("aria-selected", String(mode === "text"));
-        render();
-      }
+      function setMode(mode) { currentMode = mode; htmlMode.setAttribute("aria-selected", String(mode === "html")); textMode.setAttribute("aria-selected", String(mode === "text")); render(); }
       function render() {
         const started = performance.now();
         const sheet = ChordSheet.parse(input.value);
         const count = input.value ? input.value.split(/\r\n|\r|\n/).length : 0;
         lineCount.textContent = `${count} ${count === 1 ? "line" : "lines"}`;
-        if (currentMode === "text") {
-          output.className = "output-wrap as-text";
-          output.textContent = ChordSheet.toText(sheet);
-        } else {
-          output.className = "output-wrap";
-          output.innerHTML = ChordSheet.toHTML(sheet, { inlineStyles: false });
-        }
+        if (currentMode === "text") { output.className = "output-wrap as-text"; output.textContent = ChordSheet.toText(sheet); }
+        else { output.className = "output-wrap"; output.innerHTML = ChordSheet.toHTML(sheet, { inlineStyles: false }); }
         renderStatus.textContent = `Rendered in ${Math.max(1, Math.round(performance.now() - started))}ms`;
       }
       async function copyOutput() {
         const sheet = ChordSheet.parse(input.value);
-        const value =
-          currentMode === "text"
-            ? ChordSheet.toText(sheet)
-            : ChordSheet.toHTML(sheet, { inlineStyles: false });
-        try {
-          await navigator.clipboard.writeText(value);
-          copyLabel.textContent = "Copied!";
-          window.setTimeout(() => {
-            copyLabel.textContent = "Copy output";
-          }, 1400);
-        } catch (error) {
-          copyLabel.textContent = "Copy unavailable";
-          window.setTimeout(() => {
-            copyLabel.textContent = "Copy output";
-          }, 1800);
-        }
+        const value = currentMode === "text" ? ChordSheet.toText(sheet) : ChordSheet.toHTML(sheet, { inlineStyles: false });
+        try { await navigator.clipboard.writeText(value); copyLabel.textContent = "Copied!"; window.setTimeout(() => { copyLabel.textContent = "Copy output"; }, 1400); }
+        catch (error) { copyLabel.textContent = "Copy unavailable"; window.setTimeout(() => { copyLabel.textContent = "Copy output"; }, 1800); }
       }
       input.value = samples.daybreak;
       input.addEventListener("input", render);
-      sampleSelect.addEventListener("change", () => {
-        input.value = samples[sampleSelect.value];
-        render();
-        input.focus();
-      });
+      sampleSelect.addEventListener("change", () => { input.value = samples[sampleSelect.value]; render(); input.focus(); });
       htmlMode.addEventListener("click", () => setMode("html"));
       textMode.addEventListener("click", () => setMode("text"));
       copyButton.addEventListener("click", copyOutput);
